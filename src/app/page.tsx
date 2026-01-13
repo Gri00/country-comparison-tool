@@ -2,52 +2,80 @@
 
 import { useRouter } from "next/navigation";
 import { COUNTRIES } from "@/app/constants/countries";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const MapComponent = dynamic(() => import("./components/MapComponent"), {
+  ssr: false,
+});
 
 export default function HomePage() {
   const router = useRouter();
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+
+  const handleCountryClick = (countryCode: string) => {
+    setSelectedCountry(countryCode);
+    setTimeout(() => {
+      router.push("/calculator");
+    }, 1200);
+  };
 
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center px-4 text-neutral-100">
-      <div className="text-center">
+    <div
+      className="
+        min-h-screen bg-neutral-900 px-6 text-neutral-100
+        grid place-items-center
+      "
+    >
+      {/* CENTERED GRID CONTENT */}
+      <div
+        className="
+          grid grid-cols-[auto_auto_auto]
+          items-center
+          gap-x-20
+        "
+      >
+        {/* Header */}
+        <div className="text-left max-w-sm">
+          <h1 className="text-4xl md:text-7xl font-bold mb-4">
+            How&apos;s life in <span className="text-emerald-400">...</span>
+          </h1>
+          <p className="text-neutral-400">
+            Compare salaries, taxes and quality of life
+          </p>
+        </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold mb-12">
-          How&apos;s life in{" "}
-          <span className="text-emerald-400">...</span>
-        </h1>
-
-        <div className="flex gap-8 justify-center">
+        {/* Buttons */}
+        <div className="flex flex-col gap-6">
           {COUNTRIES.map((country) => (
             <button
               key={country.code}
-              // onClick={() =>
-              //   router.push(`/countryInfo?country=${country.code}`)
-              // }
-              onClick={() =>
-                router.push(`/calculator`)
-              }
-              className="group relative w-28 h-28 rounded-2xl bg-neutral-800/70 backdrop-blur
-                flex flex-col items-center justify-center text-5xl shadow-lg
+              onClick={() => handleCountryClick(country.code)}
+              className="
+                group relative w-24 h-24 rounded-2xl
+                bg-neutral-800/70 backdrop-blur
+                flex flex-col items-center justify-center
+                text-4xl shadow-lg
                 transition-all duration-300
-                hover:-translate-y-2 hover:scale-110
-                hover:shadow-emerald-500/30 active:scale-95"
+                hover:-translate-y-1 hover:scale-105
+                hover:shadow-emerald-500/30
+                active:scale-95
+              "
             >
-              <span className="transition-transform duration-300 group-hover:scale-125">
+              <span className="transition-transform duration-300 group-hover:scale-110">
                 {country.flag}
               </span>
-
-              <span className="mt-2 text-sm text-neutral-400 group-hover:text-emerald-400 transition">
+              <span className="mt-1 text-xs text-neutral-400 group-hover:text-emerald-400 transition">
                 {country.name}
               </span>
-
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition
-                bg-linear-to-br from-emerald-500/10 to-sky-500/10" />
             </button>
           ))}
         </div>
 
-        <p className="mt-10 text-neutral-400">
-          Compare salaries, taxes and quality of life
-        </p>
+        {/* Globe */}
+        <div className="w-65 h-65 md:w-110 md:h-150 shrink-0">
+          <MapComponent selectedCountryCode={selectedCountry} />
+        </div>
       </div>
     </div>
   );
