@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { COUNTRIES } from "@/app/constants/countries";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import CountrySearch from "./components/CountrySearch";
 
 const MapComponent = dynamic(() => import("./components/MapComponent"), {
   ssr: false,
@@ -40,9 +41,36 @@ export default function HomePage() {
           <h1 className="text-4xl md:text-7xl font-bold mb-4">
             How&apos;s life in <span className="text-emerald-400">...</span>
           </h1>
-          <p className="text-neutral-400">
-            Compare salaries, taxes and quality of life
-          </p>
+
+          {/* Searchbox */}
+          <div className="mb-4">
+            <CountrySearch
+              countries={COUNTRIES}
+              onSelect={handleCountryClick}
+            />
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <p className="text-neutral-400 mb-3 mt-5">
+              Compare salaries, taxes and quality of life
+            </p>
+
+            <button
+              onClick={() => router.push("/compare")}
+              className="
+              inline-flex items-center gap-2
+              px-7 py-3 rounded-xl
+              bg-emerald-500 text-neutral-800
+              font-semibold text-sm
+              shadow-lg shadow-emerald-500/25
+              transition-all duration-300
+              hover:brightness-110 hover:scale-105
+              active:scale-95
+              mr-2
+            "
+            >
+              Compare countries
+            </button>
+          </div>
         </div>
 
         {/* Buttons */}

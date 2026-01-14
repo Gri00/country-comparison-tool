@@ -63,25 +63,38 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
 
   // Slow auto-rotation (requestAnimationFrame)
   useEffect(() => {
-    if (!globeRef.current) return;
-
     let raf = 0;
+    let cancelled = false;
 
     const rotate = () => {
-      if (selectedCountryCode) return;
+      // stop if unmounted/cancelled
+      if (cancelled) return;
 
-      const pov = globeRef.current!.pointOfView();
-      globeRef.current!.pointOfView(
-        { ...pov, lng: pov.lng + 0.09 }, //(smaller = slower)
-        0
-      );
+      // stop rotating while a country is selected
+      if (selectedCountryCode) {
+        raf = requestAnimationFrame(rotate);
+        return;
+      }
+
+      const globe = globeRef.current;
+      if (!globe) {
+        // Globe not ready yet or already unmounted
+        raf = requestAnimationFrame(rotate);
+        return;
+      }
+
+      const pov = globe.pointOfView();
+      globe.pointOfView({ ...pov, lng: pov.lng + 0.09 }, 0);
 
       raf = requestAnimationFrame(rotate);
     };
 
     raf = requestAnimationFrame(rotate);
 
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
   }, [selectedCountryCode]);
 
   // Zoom + marker
