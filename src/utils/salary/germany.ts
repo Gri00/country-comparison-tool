@@ -174,12 +174,6 @@ export const germanyCalculator: CountryCalculator<GermanyInput> = {
       ],
     },
     {
-      key: "childrenUnder25",
-      label: "Children under 25 (for care insurance)",
-      step: 1,
-      min: 0,
-    },
-    {
       key: "churchTax",
       label: "Church tax",
       type: "select",
@@ -188,11 +182,6 @@ export const germanyCalculator: CountryCalculator<GermanyInput> = {
         { value: "8", label: "8%" },
         { value: "9", label: "9%" },
       ],
-    },
-    {
-      key: "includeSoli",
-      label: "Include solidarity surcharge (Soli)",
-      type: "checkbox",
     },
     {
       key: "healthInsurance",
@@ -204,12 +193,24 @@ export const germanyCalculator: CountryCalculator<GermanyInput> = {
       ],
     },
     {
+      key: "childrenUnder25",
+      label: "Children under 25 (for care insurance)",
+      step: 1,
+      min: 0,
+    },
+    {
       key: "privateHealthPremiumMonthly",
       label: "Private health premium (monthly €)",
       step: 1,
       min: 0,
     },
+    {
+      key: "includeSoli",
+      label: "Include solidarity surcharge (Soli)",
+      type: "checkbox",
+    },
   ],
+
   grossToNet: grossToNetGermany,
   netToGross: netToGrossGermany,
 };
