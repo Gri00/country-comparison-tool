@@ -16,6 +16,12 @@ interface MapProps {
   selectedCountryCode: string | null;
 }
 
+const CODE_TO_GEO_NAME: Record<string, string> = {
+  si: "Slovenia",
+  de: "Germany",
+  at: "Austria",
+};
+
 export default function MapComponent({ selectedCountryCode }: MapProps) {
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
 
@@ -50,7 +56,7 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
       .then((topo: any) => {
         const geojson = feature(
           topo,
-          (topo.objects as any).countries
+          (topo.objects as any).countries,
         ) as unknown as FeatureCollection;
 
         geojson.features.forEach((c: any) => {
@@ -63,9 +69,13 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
 
   const selectedPolygon = useMemo(() => {
     if (!selectedCountryCode) return null;
-    const found = countries.find((c: any) => {
-      return c?.properties?.name === selectedCountryCode;
-    });
+
+    const targetName = CODE_TO_GEO_NAME[selectedCountryCode.toLowerCase()];
+    if (!targetName) return null;
+
+    const found = countries.find(
+      (c: any) => c?.properties?.name === targetName,
+    );
     return found ?? null;
   }, [selectedCountryCode, countries]);
 

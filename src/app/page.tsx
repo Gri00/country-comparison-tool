@@ -17,7 +17,7 @@ export default function HomePage() {
   const handleCountryClick = (countryCode: string) => {
     setSelectedCountry(countryCode);
     setTimeout(() => {
-      router.push("/calculator");
+      router.push(`/country-info/${countryCode}`);
     }, 1200);
   };
 

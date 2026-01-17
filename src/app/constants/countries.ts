@@ -7,17 +7,17 @@ export interface Country {
 export const COUNTRIES: Country[] = [
   {
     name: "Slovenia",
-    code: "Slovenia",
+    code: "si",
     flag: "🇸🇮",
   },
   {
     name: "Germany",
-    code: "Germany",
+    code: "de",
     flag: "🇩🇪",
   },
   {
     name: "Austria",
-    code: "Austria",
+    code: "at",
     flag: "🇦🇹",
   },
 ];
