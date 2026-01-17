@@ -12,7 +12,7 @@ import { InputFieldDef } from "@/utils/salary/types";
 import TogglePlusXButton from "./TogglePlusXButton";
 
 type Direction = "grossToNet" | "netToGross";
-type CountryValue = SupportedCountryCode | ""; // <-- empty state
+type CountryValue = SupportedCountryCode | "";
 
 type CalcState = {
   id: string;
@@ -292,7 +292,7 @@ export default function SalaryComparison() {
   return (
     <div className="min-h-screen bg-neutral-900 text-neutral-100 px-4 py-10">
       <div className="max-w-6xl mx-auto">
-        <div className="mt-6 mb-8 text-center">
+        <div className="mt-10 mb-8 text-center">
           <h1 className="text-3xl font-bold text-emerald-400">
             Salary Calculator
           </h1>

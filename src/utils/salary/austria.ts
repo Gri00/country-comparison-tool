@@ -10,7 +10,7 @@ export interface AustriaInput extends BaseSalaryInput {
 
 const employeeSocialRate = 0.1807;
 
-// Austria 2025 brackets (same as before; you can keep your bracket table)
+// Austria 2025 brackets
 const brackets2025 = [
   { upTo: 13308, rate: 0.0 },
   { upTo: 21617, rate: 0.2 },

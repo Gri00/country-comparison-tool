@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Globe, { GlobeMethods } from "react-globe.gl";
 import * as d3 from "d3-geo";
 import { feature } from "topojson-client";
-import { FeatureCollection } from "geojson";
+import { FeatureCollection, Feature, Geometry } from "geojson";
 
 interface Marker {
   lat: number;
@@ -22,7 +22,7 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 320, h: 320 });
 
-  const [countries, setCountries] = useState<any[]>([]);
+  const [countries, setCountries] = useState<Feature<Geometry, any>[]>([]);
   const [markers, setMarkers] = useState<Marker[]>([]);
 
   // Measure container and keep Globe canvas in sync
@@ -45,7 +45,7 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
 
   // Load countries
   useEffect(() => {
-    fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+    fetch("/data/countries-110m.json")
       .then((res) => res.json())
       .then((topo: any) => {
         const geojson = feature(
@@ -61,16 +61,22 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
       });
   }, []);
 
-  // Slow auto-rotation (requestAnimationFrame)
+  const selectedPolygon = useMemo(() => {
+    if (!selectedCountryCode) return null;
+    const found = countries.find((c: any) => {
+      return c?.properties?.name === selectedCountryCode;
+    });
+    return found ?? null;
+  }, [selectedCountryCode, countries]);
+
+  // Slow auto-rotation
   useEffect(() => {
     let raf = 0;
     let cancelled = false;
 
     const rotate = () => {
-      // stop if unmounted/cancelled
       if (cancelled) return;
 
-      // stop rotating while a country is selected
       if (selectedCountryCode) {
         raf = requestAnimationFrame(rotate);
         return;
@@ -78,7 +84,6 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
 
       const globe = globeRef.current;
       if (!globe) {
-        // Globe not ready yet or already unmounted
         raf = requestAnimationFrame(rotate);
         return;
       }
@@ -99,21 +104,21 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
 
   // Zoom + marker
   useEffect(() => {
-    if (!selectedCountryCode || countries.length === 0 || !globeRef.current)
-      return;
+    if (!selectedPolygon || !globeRef.current) return;
 
-    const country = countries.find(
-      (c) => c.properties.name === selectedCountryCode
-    );
-    if (!country) return;
+    const [lng, lat] = (selectedPolygon as any).centroid || [0, 0];
 
-    const [lng, lat] = country.centroid;
-
-    // Higher altitude => globe appears smaller
     globeRef.current.pointOfView({ lat, lng, altitude: 1 }, 1000);
+    setMarkers([{ lat, lng, imgUrl: "/images/pin.png" }]);
+  }, [selectedPolygon]);
 
-    setMarkers([{ lat, lng, imgUrl: "/images/location.png" }]);
-  }, [selectedCountryCode, countries]);
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    const r = globe.renderer();
+    if (!r) return;
+    r.setPixelRatio(Math.min(1.25, window.devicePixelRatio));
+  }, []);
 
   return (
     <div ref={containerRef} className="w-full h-full">
@@ -121,7 +126,7 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
         ref={globeRef}
         width={size.w}
         height={size.h}
-        globeImageUrl="/images/earth-day.jpg"
+        globeImageUrl="/images/earth2.jpg"
         backgroundColor="rgba(0,0,0,0)"
         enablePointerInteraction={true}
         htmlElementsData={markers}
@@ -136,6 +141,11 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
         }}
         htmlLat={(d) => (d as Marker).lat}
         htmlLng={(d) => (d as Marker).lng}
+        polygonsData={selectedPolygon ? [selectedPolygon] : []}
+        polygonCapColor={() => "rgba(0,0,0,0)"}
+        polygonSideColor={() => "rgba(0,0,0,0)"}
+        polygonStrokeColor={() => "red"}
+        polygonAltitude={0.01}
       />
     </div>
   );
