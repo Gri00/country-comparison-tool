@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  animate,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
 import InputField from "@/app/components/InputField";
-import ResultRow from "@/app/components/ResultRow";
 import ToggleField from "@/app/components/ToggleField";
 
 import { CALCULATORS, SupportedCountryCode } from "@/utils/salary/registry";
@@ -54,6 +59,77 @@ function createEmptyCalc(): CalcState {
   };
 }
 
+/* -------------------- animated numbers  -------------------- */
+
+function formatNumber(n: number, decimals: number) {
+  const fixed = n.toFixed(decimals);
+  const parts = fixed.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+}
+
+function currencySymbol(currency?: string) {
+  if (!currency) return "";
+  if (currency.toUpperCase() === "EUR") return "€";
+  return "";
+}
+
+function AnimatedMoney({
+  value,
+  currency,
+  decimals = 0,
+}: {
+  value: number;
+  currency?: string; // "EUR" -> €
+  decimals?: number;
+}) {
+  const mv = useMotionValue(0);
+
+  const text = useTransform(mv, (latest) => {
+    const n = Number.isFinite(latest) ? latest : 0;
+    const sym = currencySymbol(currency);
+    return `${sym}${formatNumber(n, decimals)}`;
+  });
+
+  useEffect(() => {
+    const controls = animate(mv, value ?? 0, {
+      duration: 0.85,
+      ease: "easeOut",
+    });
+    return controls.stop;
+  }, [value, mv]);
+
+  return <motion.span className="tabular-nums">{text}</motion.span>;
+}
+
+function SimpleResultRow({
+  label,
+  value,
+  highlight,
+  currency,
+}: {
+  label: string;
+  value: number;
+  highlight?: boolean;
+  currency?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="text-sm text-neutral-300">{label}</div>
+      <div
+        className={[
+          "text-sm tabular-nums",
+          highlight ? "text-emerald-200 font-semibold" : "text-neutral-100",
+        ].join(" ")}
+      >
+        <AnimatedMoney value={value} currency={currency} decimals={0} />
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- Calculator Card -------------------- */
+
 function CalculatorCard({
   state,
   title,
@@ -65,7 +141,7 @@ function CalculatorCard({
 }) {
   const calculator = useMemo(
     () => (state.country ? CALCULATORS[state.country] : null),
-    [state.country]
+    [state.country],
   );
 
   const setCountry = (code: CountryValue) => {
@@ -144,8 +220,10 @@ function CalculatorCard({
           <select
             value={state.country}
             onChange={(e) => setCountry(e.target.value as CountryValue)}
-            className="w-full rounded-xl bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
-              focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+            className="
+              w-full rounded-xl bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
+              focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400
+            "
           >
             <option value="">Select…</option>
             {Object.entries(CALCULATORS).map(([code, c]) => (
@@ -188,10 +266,6 @@ function CalculatorCard({
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             {calculator.fields.map((f: InputFieldDef<any>) => {
-              if (f.key === "amount") {
-                // amount field will be rendered normally; keep here
-              }
-
               if (f.type === "select") {
                 return (
                   <div key={f.key}>
@@ -201,8 +275,10 @@ function CalculatorCard({
                     <select
                       value={String(state.input[f.key] ?? "")}
                       onChange={(e) => setSelect(f.key, e.target.value)}
-                      className="w-full rounded-lg bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
-                        focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                      className="
+                        w-full rounded-lg bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
+                        focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400
+                      "
                     >
                       {f.options.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -242,34 +318,93 @@ function CalculatorCard({
             })}
           </div>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.985 }}
             onClick={calculate}
             className="w-full mt-5 bg-emerald-500 text-neutral-900 font-semibold py-3 rounded-xl hover:bg-emerald-400 transition"
           >
             Calculate
-          </button>
+          </motion.button>
 
-          {state.result && (
-            <div className="mt-5 bg-linear-to-br from-sky-900 to-sky-800 rounded-xl p-5">
-              <h3 className="text-base font-bold text-sky-300 mb-3">
-                Result (monthly)
-              </h3>
-              <div className="space-y-2 text-sky-100">
-                <ResultRow label="Net" value={state.result.net} highlight />
-                <ResultRow label="Gross" value={state.result.gross} />
-                <ResultRow
-                  label="Employee contributions"
-                  value={state.result.contributions}
-                />
-                <ResultRow label="Total tax" value={state.result.tax} />
-              </div>
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {state.result ? (
+              <motion.div
+                key={`${state.direction}-${Math.round(state.result.net * 100)}`}
+                initial={{ opacity: 0, y: 10, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.985 }}
+                transition={{ duration: 0.28, ease: "easeOut" }}
+                className="
+                  mt-5 rounded-2xl p-5
+                  border border-neutral-700/60
+                  bg-neutral-900/40 backdrop-blur-xl
+                  shadow-[0_12px_40px_-18px_rgba(0,0,0,0.75)]
+                  relative overflow-hidden
+                "
+              >
+                <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-sky-400/10 blur-3xl" />
+
+                <div className="relative">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div>
+                      <h3 className="text-base font-semibold text-neutral-100">
+                        Result{" "}
+                        <span className="text-neutral-400 font-normal">
+                          (monthly)
+                        </span>
+                      </h3>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        {state.direction === "grossToNet"
+                          ? "Gross → Net"
+                          : "Net → Gross"}
+                      </p>
+                    </div>
+
+                    <span
+                      className="
+                        text-[11px] px-2 py-1 rounded-full
+                        border border-neutral-700/60 bg-neutral-900/60 text-neutral-200
+                      "
+                    >
+                      {calculator?.currency ?? "—"}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <SimpleResultRow
+                      label="Net"
+                      value={state.result.net}
+                      highlight
+                      currency={calculator?.currency}
+                    />
+                    <SimpleResultRow
+                      label="Gross"
+                      value={state.result.gross}
+                      currency={calculator?.currency}
+                    />
+                    <SimpleResultRow
+                      label="Employee contributions"
+                      value={state.result.contributions}
+                      currency={calculator?.currency}
+                    />
+                    <SimpleResultRow
+                      label="Total tax"
+                      value={state.result.tax}
+                      currency={calculator?.currency}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </div>
   );
 }
+
+/* -------------------- Page wrapper (unchanged) -------------------- */
 
 export default function SalaryComparison() {
   const [left, setLeft] = useState<CalcState>(() => createEmptyCalc());
@@ -279,13 +414,10 @@ export default function SalaryComparison() {
 
   const handlePlusOrReset = () => {
     if (hasRight) {
-      // Reset BOTH to default empty
       setLeft(createEmptyCalc());
       setRight(null);
       return;
     }
-
-    // Add second
     setRight(createEmptyCalc());
   };
 
@@ -301,7 +433,6 @@ export default function SalaryComparison() {
           </p>
         </div>
 
-        {/* Desktop: 3 columns (card + plus + card). Mobile: stacked. */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 items-start justify-items-center">
           <motion.div
             layout

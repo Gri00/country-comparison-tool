@@ -17,7 +17,6 @@ export default function InputField({
 }: InputFieldProps) {
   const [internalValue, setInternalValue] = useState<string>("");
 
-  // Sync spoljašnja number vrednost u input (npr. kad resetuješ formu / menjaš državu)
   useEffect(() => {
     if (value === undefined || value === 0) {
       setInternalValue("");
@@ -34,7 +33,7 @@ export default function InputField({
         value={internalValue}
         placeholder={placeholder}
         onChange={(e) => {
-          const v = e.target.value; // string ("" ili "2000" itd.)
+          const v = e.target.value;
           setInternalValue(v);
           onChange(v);
         }}

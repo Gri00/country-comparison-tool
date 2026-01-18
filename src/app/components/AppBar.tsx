@@ -21,7 +21,7 @@ export default function AppBar() {
       { key: "calc", label: "Bruto ↔ Netto", href: "/calculator" },
       { key: "contact", label: "Contact", href: "/contact" },
     ],
-    []
+    [],
   );
 
   const go = (href: string) => {
@@ -40,7 +40,7 @@ export default function AppBar() {
           className={[
             "absolute left-0 top-1/2 -translate-y-1/2",
             "flex items-center gap-3",
-            "pl-32.5", // ⬅️ space reserved for toggle
+            "pl-32.5",
             "transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
             open
               ? "opacity-100 translate-x-0 pointer-events-auto blur-0"
@@ -62,7 +62,6 @@ export default function AppBar() {
                   "bg-neutral-800/70 backdrop-blur",
                   "ring-1 ring-emerald-500/20",
                   "shadow-lg shadow-emerald-500/20",
-                  // item entrance animation (slide + fade) + hover micro-interactions
                   "transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
                   open
                     ? "translate-y-0 opacity-100"
@@ -88,12 +87,10 @@ export default function AppBar() {
           className={[
             "absolute left-0 top-1/2 -translate-y-1/2",
             "inline-flex items-center justify-center",
-            // make room for the "Menu" label
             "h-10 rounded-full px-3",
             "bg-neutral-800/70 backdrop-blur",
             "ring-1 ring-emerald-500/25",
             "shadow-lg shadow-emerald-500/25",
-            // smoother motion
             "transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]",
             "hover:brightness-110 hover:scale-[1.03]",
             "active:scale-95",
@@ -104,7 +101,7 @@ export default function AppBar() {
             <HamburgerToX open={open} />
           </span>
 
-          {/* "Menu" label with smooth swap */}
+          {/* "Menu" label*/}
           <span className="relative ml-2 w-14 h-5 overflow-hidden">
             <span
               className={[
@@ -132,7 +129,7 @@ export default function AppBar() {
 }
 
 /**
- * Smooth hamburger -> X morph using transforms (no libs)
+ * Hmburger
  */
 function HamburgerToX({ open }: { open: boolean }) {
   return (

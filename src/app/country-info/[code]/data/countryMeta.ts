@@ -15,6 +15,7 @@ export const EMPTY_COUNTRY_META: CountryMeta = {
     beer: "—",
     coffee: "—",
     meal: "—",
+    fastFood: "—",
   },
   groceries: {
     milk: "—",
@@ -22,6 +23,7 @@ export const EMPTY_COUNTRY_META: CountryMeta = {
     chicken: "—",
     mincedMeat: "—",
     cocaCola: "—",
+    flour: "—",
   },
   publicTransport: {
     monthly: "—",
@@ -53,11 +55,12 @@ export type CountryMeta = {
   sideImage: string;
 
   // cost of living
-  rent50m2: string; // € / month
+  rent50m2: string;
   cityPrices: {
     beer: string;
     coffee: string;
     meal: string;
+    fastFood: string;
   };
   groceries: {
     milk: string;
@@ -65,6 +68,7 @@ export type CountryMeta = {
     chicken: string;
     mincedMeat: string;
     cocaCola: string;
+    flour: string;
   };
   publicTransport: {
     monthly: string;
@@ -91,7 +95,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
     currency: "EUR",
     languages: "Slovene",
     timezone: "CET/CEST",
-    note: "Placeholder values — replace later with real sources.",
+    // note: "Placeholder values — replace later with real sources.",
     heroImage:
       "https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&fit=crop&w=2400&q=80",
     sideImage:
@@ -102,6 +106,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       beer: "€3.5–€5",
       coffee: "€1.8–€3",
       meal: "€10–€18",
+      fastFood: "€4–€7",
     },
     groceries: {
       milk: "€1.0–€1.5",
@@ -109,6 +114,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       chicken: "€7–€10 / kg",
       mincedMeat: "€8–€12 / kg",
       cocaCola: "€1.3–€2 (1.5L)",
+      flour: "€0.80–€1.40 / kg",
     },
     publicTransport: {
       monthly: "€25–€45",
@@ -134,7 +140,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
     currency: "EUR",
     languages: "German",
     timezone: "CET/CEST",
-    note: "Placeholder values — replace later with real sources.",
+    // note: "Placeholder values — replace later with real sources.",
     heroImage:
       "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=2400&q=80",
     sideImage:
@@ -145,6 +151,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       beer: "€3–€5",
       coffee: "€2–€4",
       meal: "€12–€22",
+      fastFood: "€5–€8",
     },
     groceries: {
       milk: "€1.0–€1.6",
@@ -152,6 +159,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       chicken: "€8–€12 / kg",
       mincedMeat: "€9–€13 / kg",
       cocaCola: "€1.3–€2.2 (1.5L)",
+      flour: "€0.55–€1.20 / kg",
     },
     publicTransport: {
       monthly: "€49 (Deutschlandticket)",
@@ -177,7 +185,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
     currency: "EUR",
     languages: "German",
     timezone: "CET/CEST",
-    note: "Placeholder values — replace later with real sources.",
+    // note: "Placeholder values — replace later with real sources.",
     heroImage:
       "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=2400&q=80",
     sideImage:
@@ -188,6 +196,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       beer: "€4–€6",
       coffee: "€2.5–€4",
       meal: "€12–€24",
+      fastFood: "€5–€8.5",
     },
     groceries: {
       milk: "€1.1–€1.7",
@@ -195,6 +204,7 @@ export const COUNTRY_META: Record<string, CountryMeta> = {
       chicken: "€9–€13 / kg",
       mincedMeat: "€10–€14 / kg",
       cocaCola: "€1.5–€2.5 (1.5L)",
+      flour: "€0.70–€1.40 / kg",
     },
     publicTransport: {
       monthly: "€50–€70",

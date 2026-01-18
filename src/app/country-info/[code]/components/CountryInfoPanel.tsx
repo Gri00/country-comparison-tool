@@ -64,6 +64,7 @@ export default function CountryInfoPanel({ meta }: { meta: CountryMeta }) {
             <StatCard label="Beer" value={meta.cityPrices.beer} />
             <StatCard label="Coffee" value={meta.cityPrices.coffee} />
             <StatCard label="Meal (restaurant)" value={meta.cityPrices.meal} />
+            <StatCard label="Fast food" value={meta.cityPrices.fastFood} />
           </div>
         </Section>
 
@@ -71,6 +72,7 @@ export default function CountryInfoPanel({ meta }: { meta: CountryMeta }) {
           <div className="grid gap-3 sm:grid-cols-2">
             <StatCard label="Milk" value={meta.groceries.milk} />
             <StatCard label="Eggs" value={meta.groceries.eggs} />
+            <StatCard label="Flour" value={meta.groceries.flour} />
             <StatCard label="Chicken" value={meta.groceries.chicken} />
             <StatCard label="Minced meat" value={meta.groceries.mincedMeat} />
             <StatCard label="Coca Cola" value={meta.groceries.cocaCola} />

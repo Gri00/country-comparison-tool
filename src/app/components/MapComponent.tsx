@@ -31,7 +31,6 @@ export default function MapComponent({ selectedCountryCode }: MapProps) {
   const [countries, setCountries] = useState<Feature<Geometry, any>[]>([]);
   const [markers, setMarkers] = useState<Marker[]>([]);
 
-  // Measure container and keep Globe canvas in sync
   useLayoutEffect(() => {
     if (!containerRef.current) return;
 
