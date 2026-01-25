@@ -12,14 +12,27 @@ type Props = {
   countries: Country[];
   onSelect: (countryCode: string) => void;
   placeholder?: string;
+  value?: string;
+  onValueChange?: (v: string) => void;
+  className?: string;
 };
 
 export default function CountrySearch({
   countries,
   onSelect,
   placeholder = "Search a country...",
+  value,
+  onValueChange,
+  className,
 }: Props) {
-  const [query, setQuery] = useState("");
+  const [internalQuery, setInternalQuery] = useState("");
+  const query = value ?? internalQuery;
+
+  const setQuery = (v: string) => {
+    if (onValueChange) onValueChange(v);
+    else setInternalQuery(v);
+  };
+
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -42,11 +55,6 @@ export default function CountrySearch({
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  // Reset active index when list changes
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query]);
-
   const pick = (country: { code: string; name: string }) => {
     setQuery(country.name);
     setOpen(false);
@@ -57,6 +65,7 @@ export default function CountrySearch({
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open && (e.key === "ArrowDown" || e.key === "Enter")) {
       setOpen(true);
+      setActiveIndex(0);
       return;
     }
 
@@ -78,7 +87,10 @@ export default function CountrySearch({
   };
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-sm">
+    <div
+      ref={wrapperRef}
+      className={`relative w-full ${className ?? "max-w-sm"}`}
+    >
       <div
         className="
           flex items-center gap-3
@@ -113,14 +125,15 @@ export default function CountrySearch({
           onChange={(e) => {
             setQuery(e.target.value);
             setOpen(true);
+            setActiveIndex(0);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            setActiveIndex(0);
+          }}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          className="
-            w-full bg-transparent outline-none
-            text-neutral-100 placeholder:text-neutral-500
-          "
+          className="w-full bg-transparent outline-none text-neutral-100 placeholder:text-neutral-500"
         />
 
         {/* Hint */}

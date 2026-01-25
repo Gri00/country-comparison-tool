@@ -30,10 +30,10 @@ export default function AppBar() {
   };
 
   // toggle is 40px wide (w-10). add ~14px gap => 54px total
-  const MENU_OFFSET = "translate-x-[130px]";
+  //const MENU_OFFSET = "translate-x-[130px]";
 
   return (
-    <div className="fixed top-7 left-1/7 -translate-x-1/2 z-50">
+    <div className="fixed top-7 left-1/7 -translate-x-1/2 z-50 hidden-when-compare-ready">
       <div className="relative h-10">
         {/* Menu items */}
         <div
