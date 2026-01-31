@@ -38,6 +38,8 @@ export default function ComparePage() {
   }, [ready]);
 
   const reset = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
     setLeftCode(null);
     setRightCode(null);
     setLeftQuery("");

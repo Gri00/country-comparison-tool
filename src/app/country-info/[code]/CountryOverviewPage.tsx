@@ -1,6 +1,6 @@
 "use client";
 
-import { playfair, serif, sora } from "@/app/fonts";
+import { sora } from "@/app/fonts";
 import CountryInfoPanel from "./components/CountryInfoPanel";
 import CountryMediaCard from "./components/CountryMediaCard";
 import SalaryCalculatorCard from "./components/SalaryCalculatorCard";
@@ -63,7 +63,7 @@ export default function CountryOverviewPage({ countryCode }: Props) {
           {/* RIGHT */}
           <div className="flex flex-col gap-6 lg:pl-2 items-stretch h-full">
             <SalaryCalculatorCard
-              title="Gross / Net calculator"
+              title="Brutto / Netto calculator"
               defaultCountry={code}
             />
 

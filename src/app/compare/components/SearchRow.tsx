@@ -38,12 +38,12 @@ export default function SearchRow({
           : "grid w-full grid-cols-1 md:grid-cols-2 gap-3 items-center"
       }
     >
-      {/* LEFT */}
+      {/* Country A */}
       <div className="w-full md:justify-self-start">
         <CountrySearch
           className="max-w-none"
           countries={countries}
-          placeholder="Left country"
+          placeholder="Country A"
           value={leftQuery}
           onValueChange={setLeftQuery}
           onSelect={setLeftCode}
@@ -57,12 +57,12 @@ export default function SearchRow({
         </div>
       ) : null}
 
-      {/* RIGHT */}
+      {/* Country B */}
       <div className="w-full md:justify-self-end">
         <CountrySearch
           className="max-w-none"
           countries={countries}
-          placeholder="Right country"
+          placeholder="Country B"
           value={rightQuery}
           onValueChange={setRightQuery}
           onSelect={setRightCode}

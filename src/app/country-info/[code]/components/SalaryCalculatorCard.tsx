@@ -1,20 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  animate,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
-
+import { motion, animate, useMotionValue, useTransform } from "framer-motion";
 import InputField from "@/app/components/InputField";
 import ToggleField from "@/app/components/ToggleField";
-import ResultRow from "@/app/components/ResultRow";
-
 import { CALCULATORS, SupportedCountryCode } from "@/utils/salary/registry";
-import { InputFieldDef } from "@/utils/salary/types";
+import ModeDropdown from "@/app/components/ModeDropdown";
 
 type Direction = "grossToNet" | "netToGross";
 type CountryValue = SupportedCountryCode | "";
@@ -172,7 +163,7 @@ function SimpleResultRow({
 
 export default function SalaryCalculatorCard({
   defaultCountry,
-  title = "Gross / Net calculator",
+  title = "Brutto / Netto calculator",
 }: {
   defaultCountry: string;
   title?: string;
@@ -199,7 +190,7 @@ export default function SalaryCalculatorCard({
       );
       return;
     }
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState((prev) => {
       if (prev.country === resolved) return prev;
       return {
@@ -302,15 +293,18 @@ export default function SalaryCalculatorCard({
 
         {/* Mode */}
         <div>
-          <label className="text-sm text-neutral-300 block mb-1">Mode</label>
-          <DarkNativeSelect
+          <label className="text-sm text-neutral-300 block mb-1">
+            Mode (Brutto/Netto)
+          </label>
+          <ModeDropdown
             value={state.direction}
             onChange={(v) => setDirection(v as Direction)}
             disabled={!calculator}
-          >
-            <option value="grossToNet">Gross → Net</option>
-            <option value="netToGross">Net → Gross</option>
-          </DarkNativeSelect>
+            options={[
+              { value: "grossToNet", label: "B → N" },
+              { value: "netToGross", label: "N → B" },
+            ]}
+          />
         </div>
       </div>
 
@@ -327,7 +321,7 @@ export default function SalaryCalculatorCard({
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            {calculator.fields.map((f: InputFieldDef<any>) => {
+            {calculator.fields.map((f) => {
               if (f.type === "select") {
                 return (
                   <div key={f.key}>
@@ -409,8 +403,8 @@ export default function SalaryCalculatorCard({
                   </h3>
                   <p className="text-xs text-neutral-400 mt-1">
                     {state.direction === "grossToNet"
-                      ? "Gross → Net"
-                      : "Net → Gross"}
+                      ? "Brutto → Netto"
+                      : "Netto → Brutto"}
                   </p>
                 </div>
 
@@ -433,13 +427,13 @@ export default function SalaryCalculatorCard({
                 {state.result ? (
                   <div className="space-y-2">
                     <SimpleResultRow
-                      label="Net"
+                      label="Netto"
                       value={state.result.net}
                       highlight
                       currency={calculator?.currency}
                     />
                     <SimpleResultRow
-                      label="Gross"
+                      label="Brutto"
                       value={state.result.gross}
                       currency={calculator?.currency}
                     />

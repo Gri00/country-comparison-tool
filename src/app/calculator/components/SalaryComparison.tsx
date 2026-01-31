@@ -11,10 +11,11 @@ import {
 
 import InputField from "@/app/components/InputField";
 import ToggleField from "@/app/components/ToggleField";
+import TogglePlusXButton from "./TogglePlusXButton";
+import SearchDropdown, { SearchOption } from "@/app/components/SearchDropdown";
+import ModeDropdown from "@/app/components/ModeDropdown";
 
 import { CALCULATORS, SupportedCountryCode } from "@/utils/salary/registry";
-import { InputFieldDef } from "@/utils/salary/types";
-import TogglePlusXButton from "./TogglePlusXButton";
 
 type Direction = "grossToNet" | "netToGross";
 type CountryValue = SupportedCountryCode | "";
@@ -144,6 +145,16 @@ function CalculatorCard({
     [state.country],
   );
 
+  // SearchDropdown
+  const countryOptions: SearchOption[] = useMemo(() => {
+    return Object.entries(CALCULATORS)
+      .map(([code, c]) => ({
+        code,
+        name: c.countryName,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
   const setCountry = (code: CountryValue) => {
     onUpdate({
       ...state,
@@ -213,42 +224,31 @@ function CalculatorCard({
         </p>
       </div>
 
-      {/* Top controls */}
+      {/* Top controls  */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
         <div className="sm:col-span-2">
-          <label className="text-sm text-neutral-300 block mb-1">Country</label>
-          <select
+          <SearchDropdown
+            label="Country"
+            countries={countryOptions}
             value={state.country}
-            onChange={(e) => setCountry(e.target.value as CountryValue)}
-            className="
-              w-full rounded-xl bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
-              focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400
-            "
-          >
-            <option value="">Select…</option>
-            {Object.entries(CALCULATORS).map(([code, c]) => (
-              <option key={code} value={code}>
-                {c.countryName}
-              </option>
-            ))}
-          </select>
+            onChange={(code) => setCountry(code as CountryValue)}
+            placeholder="Search a country…"
+          />
         </div>
 
         <div>
-          <label className="text-sm text-neutral-300 block mb-1">Mode</label>
-          <select
+          <label className="text-sm text-neutral-300 block mb-1">
+            Mode (Brutto/Netto)
+          </label>
+          <ModeDropdown
             value={state.direction}
-            onChange={(e) => setDirection(e.target.value as Direction)}
+            onChange={(v) => setDirection(v as Direction)}
             disabled={!calculator}
-            className="
-              w-full rounded-xl bg-neutral-900 border border-neutral-700 px-3 py-2 text-neutral-100
-              focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400
-              disabled:opacity-50 disabled:cursor-not-allowed
-            "
-          >
-            <option value="grossToNet">Gross → Net</option>
-            <option value="netToGross">Net → Gross</option>
-          </select>
+            options={[
+              { value: "grossToNet", label: "B → N" },
+              { value: "netToGross", label: "N → B" },
+            ]}
+          />
         </div>
       </div>
 
@@ -265,7 +265,7 @@ function CalculatorCard({
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            {calculator.fields.map((f: InputFieldDef<any>) => {
+            {calculator.fields.map((f) => {
               if (f.type === "select") {
                 return (
                   <div key={f.key}>
@@ -356,8 +356,8 @@ function CalculatorCard({
                       </h3>
                       <p className="text-xs text-neutral-400 mt-1">
                         {state.direction === "grossToNet"
-                          ? "Gross → Net"
-                          : "Net → Gross"}
+                          ? "Brutto → Netto"
+                          : "Netto → Brutto"}
                       </p>
                     </div>
 
@@ -373,13 +373,13 @@ function CalculatorCard({
 
                   <div className="space-y-2">
                     <SimpleResultRow
-                      label="Net"
+                      label="Netto"
                       value={state.result.net}
                       highlight
                       currency={calculator?.currency}
                     />
                     <SimpleResultRow
-                      label="Gross"
+                      label="Brutto"
                       value={state.result.gross}
                       currency={calculator?.currency}
                     />
@@ -404,7 +404,7 @@ function CalculatorCard({
   );
 }
 
-/* -------------------- Page wrapper (unchanged) -------------------- */
+/* -------------------- Page wrapper -------------------- */
 
 export default function SalaryComparison() {
   const [left, setLeft] = useState<CalcState>(() => createEmptyCalc());

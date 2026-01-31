@@ -33,7 +33,7 @@ export default function ContactPage() {
 
             <button
               onClick={() => setShowSecret((v) => !v)}
-              className="ml-auto inline-flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/30 px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-900 transition"
+              className="ml-auto hidden md:inline-flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/30 px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-900 transition"
             >
               <span className="text-lg">🕹️</span>
             </button>
