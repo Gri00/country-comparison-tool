@@ -100,9 +100,8 @@ export default function CountryMediaCard({
     return () => clearInterval(t);
   }, [slides.length, autoMs]);
 
-  useEffect(() => setIdx(0), [slides.length]);
-
-  const current = slides[idx];
+  const safeIdx = clamp(idx, 0, Math.max(slides.length - 1, 0));
+  const current = slides[safeIdx];
 
   return (
     <div

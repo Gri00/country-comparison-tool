@@ -6,10 +6,9 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import SearchRow from "./components/SearchRow";
 import { COUNTRIES } from "../constants/countries";
 import CountryInfoPanel from "../country-info/[code]/components/CountryInfoPanel";
-import {
-  CountryMeta,
-  COUNTRY_META,
-} from "../country-info/[code]/data/countryMeta";
+import { CountryMeta } from "@/data/types";
+import { getCountryMeta } from "@/lib/queries/getCountryMeta";
+import { EMPTY_COUNTRY_META } from "@/data/emptyCountryMeta";
 
 export default function ComparePage() {
   const [leftCode, setLeftCode] = useState<string | null>(null);
@@ -17,6 +16,10 @@ export default function ComparePage() {
 
   const [leftQuery, setLeftQuery] = useState("");
   const [rightQuery, setRightQuery] = useState("");
+
+  // Store the fetched country meta
+  const [leftMeta, setLeftMeta] = useState<CountryMeta | null>(null);
+  const [rightMeta, setRightMeta] = useState<CountryMeta | null>(null);
 
   const countries = useMemo(
     () =>
@@ -28,8 +31,9 @@ export default function ComparePage() {
     [],
   );
 
-  const ready = Boolean(leftCode && rightCode);
+  const ready = Boolean(leftMeta && rightMeta);
 
+  // Update body dataset when comparison is ready
   useEffect(() => {
     document.body.dataset.compareReady = ready ? "1" : "0";
     return () => {
@@ -37,22 +41,45 @@ export default function ComparePage() {
     };
   }, [ready]);
 
+  // Reset all selections
   const reset = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-
     setLeftCode(null);
     setRightCode(null);
     setLeftQuery("");
     setRightQuery("");
+    setLeftMeta(null);
+    setRightMeta(null);
   };
 
-  const leftMeta: CountryMeta | null = leftCode
-    ? (COUNTRY_META[leftCode] ?? null)
-    : null;
+  // Fetch meta when country codes change
+  useEffect(() => {
+    const fetchMeta = async () => {
+      if (leftCode) {
+        try {
+          const meta = await getCountryMeta(leftCode);
+          setLeftMeta({ ...EMPTY_COUNTRY_META, ...meta });
+        } catch {
+          setLeftMeta(EMPTY_COUNTRY_META);
+        }
+      } else {
+        setLeftMeta(null);
+      }
 
-  const rightMeta: CountryMeta | null = rightCode
-    ? (COUNTRY_META[rightCode] ?? null)
-    : null;
+      if (rightCode) {
+        try {
+          const meta = await getCountryMeta(rightCode);
+          setRightMeta({ ...EMPTY_COUNTRY_META, ...meta });
+        } catch {
+          setRightMeta(EMPTY_COUNTRY_META);
+        }
+      } else {
+        setRightMeta(null);
+      }
+    };
+
+    fetchMeta();
+  }, [leftCode, rightCode]);
 
   return (
     <div className="min-h-screen bg-neutral-900 text-neutral-100">
@@ -77,8 +104,8 @@ export default function ComparePage() {
                     rightQuery={rightQuery}
                     setLeftQuery={setLeftQuery}
                     setRightQuery={setRightQuery}
-                    setLeftCode={(c) => setLeftCode(c)}
-                    setRightCode={(c) => setRightCode(c)}
+                    setLeftCode={setLeftCode}
+                    setRightCode={setRightCode}
                     onReset={reset}
                     showReset
                   />
@@ -119,8 +146,8 @@ export default function ComparePage() {
                     rightQuery={rightQuery}
                     setLeftQuery={setLeftQuery}
                     setRightQuery={setRightQuery}
-                    setLeftCode={(c) => setLeftCode(c)}
-                    setRightCode={(c) => setRightCode(c)}
+                    setLeftCode={setLeftCode}
+                    setRightCode={setRightCode}
                     onReset={reset}
                     showReset={false}
                   />

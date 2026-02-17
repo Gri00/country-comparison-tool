@@ -29,3 +29,14 @@ body {
 body[data-compare-ready="1"] .hidden-when-compare-ready {
   display: none !important;
 }
+
+html {
+  overflow-y: scroll; /* reserve space to prevent shift */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+html::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}

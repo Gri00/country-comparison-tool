@@ -20,6 +20,7 @@ const CODE_TO_GEO_NAME: Record<string, string> = {
   si: "Slovenia",
   de: "Germany",
   at: "Austria",
+  ch: "Switzerland",
 };
 
 export default function MapComponent({ selectedCountryCode }: MapProps) {

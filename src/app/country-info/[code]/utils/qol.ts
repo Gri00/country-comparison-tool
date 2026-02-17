@@ -2,6 +2,7 @@ export const QOL_INDEX_2026: Record<string, number> = {
   SI: 181.53,
   AT: 199.8,
   DE: 196.3,
+  CH: 205.7,
 };
 
 // Numbeo scale-ish: top countries ~210+

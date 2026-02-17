@@ -29,27 +29,17 @@ const healthAdditionalEmployee = healthAdditionalAvgTotal2025 / 2;
 const ceilingPensionUnemp = 96600;
 const ceilingHealthCare = 66150;
 
-// Care insurance employee share by children (TK; non-Saxony simplified using employee share approx)
-// We'll approximate using the non-Saxony employee shares from the known table logic.
-// For clean UX: use general rule from TK: base 3.6%, childless 4.2%, -0.25% per child from 2nd onward.
-// Employee shares vary; we approximate with: employer pays 1.7%, employee pays remaining, surcharge fully employee.
 function careEmployeeRate(childrenUnder25: number) {
   const baseTotal = 0.036;
   const childlessTotal = 0.042;
 
   if (childrenUnder25 <= 0) {
-    // employee share ≈ 0.017 + 0.025 (extra 0.006 childless surcharge)
-    // easier: assume employee pays 0.023 (base half 1.7% + surcharge 0.6%?) — but we can compute from total:
-    // employer ~1.7%, employee ~ total - 1.7%
     return childlessTotal - 0.017;
   }
 
-  // with at least 1 child: total base 3.6%
-  // reduction: -0.25% per child from 2nd onward, capped at 5 children
   const reduction = Math.min(Math.max(childrenUnder25 - 1, 0), 4) * 0.0025;
   const total = baseTotal - reduction;
 
-  // employee share approx = total - employer(1.7%)
   return Math.max(0, total - 0.017);
 }
 
@@ -67,7 +57,6 @@ function calcEmployeeContribAnnual(grossAnnual: number, input: GermanyInput) {
     health = baseHC * (healthEmployeeBase + healthAdditionalEmployee);
     care = baseHC * careEmployeeRate(input.childrenUnder25);
   } else {
-    // private: user enters monthly premium; no statutory health/care contributions
     health = input.privateHealthPremiumMonthly * 12;
     care = 0;
   }
@@ -75,7 +64,6 @@ function calcEmployeeContribAnnual(grossAnnual: number, input: GermanyInput) {
   return pension + unemp + health + care;
 }
 
-// §32a EStG income tax function (as before; keep your current 2025 version)
 function calcIncomeTaxAnnual2025(x: number) {
   const income = Math.floor(x);
 
@@ -92,8 +80,6 @@ function calcIncomeTaxAnnual2025(x: number) {
   return Math.floor(0.45 * income - 19246.67);
 }
 
-// Very simplified “tax class” handling: approximate by scaling taxable income for III/V.
-// This is not exact, but gives you a knob in UI without rewriting full payroll wage tax tables.
 function adjustForTaxClass(taxableAnnual: number, taxClass: GermanyTaxClass) {
   if (taxClass === "III") return taxableAnnual * 0.85;
   if (taxClass === "V") return taxableAnnual * 1.12;
@@ -101,9 +87,6 @@ function adjustForTaxClass(taxableAnnual: number, taxClass: GermanyTaxClass) {
   if (taxClass === "II") return taxableAnnual * 0.95;
   return taxableAnnual;
 }
-
-// Soli: in 2025 largely gone below certain income-tax burden thresholds; we approximate:
-// if income tax <= 19,950 => 0; else 5.5% of income tax (skipping phase-in zone for simplicity)
 function calcSoli(incomeTaxAnnual: number, taxClass: GermanyTaxClass) {
   const threshold = taxClass === "III" || taxClass === "IV" ? 39900 : 19950;
   if (incomeTaxAnnual <= threshold) return 0;

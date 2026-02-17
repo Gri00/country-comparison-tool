@@ -1,6 +1,6 @@
 "use client";
 
-import type { CountryMeta } from "../data/countryMeta";
+import { CountryMeta } from "@/data/types";
 
 export default function CountryInfoPanel({ meta }: { meta: CountryMeta }) {
   const quickFacts = [
@@ -50,39 +50,39 @@ export default function CountryInfoPanel({ meta }: { meta: CountryMeta }) {
             <StatCard label="Home internet / month" value={meta.homeInternet} />
             <StatCard
               label="Public transport (monthly)"
-              value={meta.publicTransport.monthly}
+              value={meta.publicTransport?.monthly}
             />
             <StatCard
               label="Public transport (yearly)"
-              value={meta.publicTransport.yearly}
+              value={meta.publicTransport?.yearly}
             />
           </div>
         </Section>
 
         <Section title="City prices">
           <div className="grid gap-3 sm:grid-cols-2">
-            <StatCard label="Beer" value={meta.cityPrices.beer} />
-            <StatCard label="Coffee" value={meta.cityPrices.coffee} />
-            <StatCard label="Meal (restaurant)" value={meta.cityPrices.meal} />
-            <StatCard label="Fast food" value={meta.cityPrices.fastFood} />
+            <StatCard label="Beer" value={meta.cityPrices?.beer} />
+            <StatCard label="Coffee" value={meta.cityPrices?.coffee} />
+            <StatCard label="Meal (restaurant)" value={meta.cityPrices?.meal} />
+            <StatCard label="Fast food" value={meta.cityPrices?.fastFood} />
           </div>
         </Section>
 
         <Section title="Groceries">
           <div className="grid gap-3 sm:grid-cols-2">
-            <StatCard label="Milk" value={meta.groceries.milk} />
-            <StatCard label="Eggs" value={meta.groceries.eggs} />
-            <StatCard label="Flour" value={meta.groceries.flour} />
-            <StatCard label="Chicken" value={meta.groceries.chicken} />
-            <StatCard label="Minced meat" value={meta.groceries.mincedMeat} />
-            <StatCard label="Coca Cola" value={meta.groceries.cocaCola} />
+            <StatCard label="Milk" value={meta.groceries?.milk} />
+            <StatCard label="Eggs" value={meta.groceries?.eggs} />
+            <StatCard label="Flour" value={meta.groceries?.flour} />
+            <StatCard label="Chicken" value={meta.groceries?.chicken} />
+            <StatCard label="Minced meat" value={meta.groceries?.mincedMeat} />
+            <StatCard label="Coca Cola" value={meta.groceries?.cocaCola} />
           </div>
         </Section>
 
         <Section title="Fuel">
           <div className="grid gap-3 sm:grid-cols-2">
-            <StatCard label="Petrol" value={meta.fuel.petrol} />
-            <StatCard label="Diesel" value={meta.fuel.diesel} />
+            <StatCard label="Petrol" value={meta.fuel?.petrol} />
+            <StatCard label="Diesel" value={meta.fuel?.diesel} />
           </div>
         </Section>
 
@@ -90,11 +90,11 @@ export default function CountryInfoPanel({ meta }: { meta: CountryMeta }) {
           <div className="mt-1">
             <a
               className="inline-flex items-center gap-2 text-sm text-neutral-100 underline decoration-white/20 underline-offset-4 hover:decoration-white/60"
-              href={meta.officialWebsite.url}
+              href={meta.officialWebsite?.url}
               target="_blank"
               rel="noreferrer"
             >
-              {meta.officialWebsite.label}
+              {meta.officialWebsite?.label}
               <span className="text-neutral-200/60">↗</span>
             </a>
           </div>
@@ -125,13 +125,13 @@ function Section({
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value }: { label: string; value?: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
       <div className="text-[11px] uppercase tracking-widest text-neutral-200/60">
         {label}
       </div>
-      <div className="mt-1 text-sm text-neutral-100">{value}</div>
+      <div className="mt-1 text-sm text-neutral-100">{value || "N/A"}</div>
     </div>
   );
 }

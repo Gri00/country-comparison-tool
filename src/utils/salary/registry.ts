@@ -2,11 +2,13 @@ import { CountryCalculator, BaseSalaryInput } from "./types";
 import { sloveniaCalculator } from "./slovenia";
 import { austriaCalculator } from "./austria";
 import { germanyCalculator } from "./germany";
+import { switzerlandCalculator } from "./switzerland";
 
 export const CALCULATORS = {
   SI: sloveniaCalculator,
   AT: austriaCalculator,
   DE: germanyCalculator,
+  CH: switzerlandCalculator,
 } as const;
 
 export type SupportedCountryCode = keyof typeof CALCULATORS;
@@ -16,7 +18,7 @@ export type SupportedCountryCode = keyof typeof CALCULATORS;
  * Country-specific extra fields are handled by the UI dynamically.
  */
 export function getCalculator(
-  code: SupportedCountryCode
+  code: SupportedCountryCode,
 ): CountryCalculator<BaseSalaryInput> {
   return CALCULATORS[code] as unknown as CountryCalculator<BaseSalaryInput>;
 }
